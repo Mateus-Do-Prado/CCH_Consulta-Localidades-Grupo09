@@ -8,6 +8,10 @@ target/
 *.iws
 out/
 
+# Ignorando o arquivo de teste
+/testedetalhe
+*testedetalhe
+
 # NetBeans
 nbproject/private/
 nbbuild/
