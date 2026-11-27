@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
-        <exec.mainClass>utfpr.Po23sCchIbgeCompleto</exec.mainClass>
+        <exec.mainClass>utfpr.Main</exec.mainClass>
     </properties>
     <name>po23s-cch-ibge</name>
 </project>
