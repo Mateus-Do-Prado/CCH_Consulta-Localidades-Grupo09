@@ -9,7 +9,7 @@ import utfpr.http.ClienteHttp;
 import utfpr.model.Municipio;
 import utfpr.model.UF;
 
-public class LocalServico {
+public class LocalServico implements LocalidadeService {
     private static final String BASE = "https://servicodados.ibge.gov.br/api/v1/localidades";
 
     private final ClienteHttp cliente;
@@ -18,7 +18,8 @@ public class LocalServico {
         this.cliente = cliente;
     }
 
-    public List<UF> carregarUFs() {
+    @Override
+    public List<UF> listarUFs() {
         try {
             String json = cliente.buscaDados(BASE + "/estados?orderBy=nome");
             JSONArray array = new JSONArray(json);
@@ -29,32 +30,33 @@ public class LocalServico {
             }
             return ufs;
         } catch (JSONException e) {
-            throw new LocalidadesException("Resposta inesperada da API ao carregar as UFs.", e);
+            throw new LocalidadeException("Resposta inesperada da API ao carregar as UFs.", e);
         } catch (RuntimeException e) {
-            throw new LocalidadesException("Não foi possível acessar a API do IBGE. Verifique a conexão.", e);
+            throw new LocalidadeException("Não foi possível acessar a API do IBGE. Verifique a conexão.", e);
         }
     }
 
-    public List<Municipio> carregarMunicipios(UF uf) {
-        if (uf == null) {
+    @Override
+    public List<Municipio> listarMunicipios(String siglaUf) {
+        if (siglaUf == null || siglaUf.isBlank()) {
             throw new IllegalArgumentException("Selecione uma UF.");
         }
         try {
             String json = cliente.buscaDados(
-                    BASE + "/estados/" + uf.getSigla() + "/municipios?orderBy=nome");
+                    BASE + "/estados/" + siglaUf + "/municipios?orderBy=nome");
             JSONArray array = new JSONArray(json);
             List<Municipio> municipios = new ArrayList<>();
             for (int i = 0; i < array.length(); i++) {
                 JSONObject o = array.getJSONObject(i);
                 municipios.add(new Municipio(
-                        o.getInt("id"), o.getString("nome"), uf.getSigla(), extrairRegiao(o)));
+                        o.getInt("id"), o.getString("nome"), siglaUf, extrairRegiao(o)));
             }
             return municipios;
         } catch (JSONException e) {
-            throw new LocalidadesException(
-                    "Resposta inesperada da API ao carregar os municípios de " + uf.getSigla() + ".", e);
+            throw new LocalidadeException(
+                    "Resposta inesperada da API ao carregar os municípios de " + siglaUf + ".", e);
         } catch (RuntimeException e) {
-            throw new LocalidadesException(
+            throw new LocalidadeException(
                     "Não foi possível acessar a API do IBGE. Verifique a conexão.", e);
         }
     }

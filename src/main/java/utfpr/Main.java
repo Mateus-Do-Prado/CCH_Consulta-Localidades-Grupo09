@@ -1,13 +1,14 @@
 package utfpr;
 
+import javax.swing.SwingUtilities;
 import utfpr.http.ClienteHttp;
+import utfpr.servico.LocalServico;
+import utfpr.view.MainFrame;
 
 public class Main {
 
     public static void main(String[] args) {
-        ClienteHttp cliente = new ClienteHttp();
-        String baseUrl = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios";
-        String result = cliente.buscaDados(baseUrl);
-        System.out.println(result);
+        LocalServico servico = new LocalServico(new ClienteHttp());
+        SwingUtilities.invokeLater(() -> new MainFrame(servico).setVisible(true));
     }
 }
